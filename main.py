@@ -26,8 +26,6 @@ XPATH_TO_FIRST_INVOICE_STATUS_CELL = '/html/body/div[4]/div/div[2]/div/div/div/d
 
 def fetch_invoices():
     load_dotenv()
-    print(os.getenv('IFIRMA_USER'))
-    print(os.getenv('IFIRMA_PASSWORD'))
     downloaded_invoices = download_latest_unpaid_invoice(os.getenv('IFIRMA_USER'), os.getenv('IFIRMA_PASSWORD'))
     logging.basicConfig(level=os.getenv('DEBUG', False) and logging.DEBUG or logging.INFO)
 
