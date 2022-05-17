@@ -2,7 +2,6 @@ import glob
 import logging
 import os
 import smtplib
-import sys
 from email import encoders
 from email.mime.base import MIMEBase
 from functools import reduce
@@ -14,14 +13,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from dotenv import load_dotenv
+from email.mime.multipart import MIMEMultipart
 
 XPATH_TO_INVOICE_PREVIEW_PRINT_BUTTON = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[6]/a'
 
 XPATH_TO_FIRST_INVOICE_PREVIEW_LINK = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[2]/div/div[' \
-           '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[7]/a[1]'
+                                      '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[7]/a[1]'
 
 XPATH_TO_FIRST_INVOICE_STATUS_CELL = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[2]/div/div[' \
-               '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[6]'
+                                     '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[6]'
 
 
 def fetch_invoices():
@@ -85,8 +85,6 @@ def download_latest_unpaid_invoice(ifirma_login,
 
 
 def send_email_with_invoices_as_attachment(invoices, target, login, password, sender_mail):
-    from email.mime.multipart import MIMEMultipart
-
     smtp = smtplib.SMTP('smtp.emaillabs.net.pl', 587)
     smtp.login(login, password)
     msg = MIMEMultipart()
