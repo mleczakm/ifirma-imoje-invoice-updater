@@ -9,6 +9,7 @@ from pathlib import Path
 from time import sleep
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -25,12 +26,12 @@ XPATH_TO_FIRST_INVOICE_STATUS_CELL = '/html/body/div[4]/div/div[2]/div/div/div/d
 
 
 def fetch_invoices():
-    load_dotenv()
-    downloaded_invoices = download_latest_unpaid_invoice(os.getenv('IFIRMA_USER'), os.getenv('IFIRMA_PASSWORD'))
     logging.basicConfig(level=os.getenv('DEBUG', False) and logging.DEBUG or logging.INFO)
+    logging.info('Starting export invoice process iFirma -> Rachunki iMoje for user %s' % os.getenv('IFIRMA_USER'))
+    downloaded_invoices = download_latest_unpaid_invoice(os.getenv('IFIRMA_USER'), os.getenv('IFIRMA_PASSWORD'))
 
     if not downloaded_invoices:
-        logging.info('No not paid invoices!')
+        logging.info('No new not paid invoices to be synced, aborting')
         return
 
     logging.info('Fetched invoices: %s' % reduce(lambda a, b: a + ', ' + b, downloaded_invoices))
@@ -52,15 +53,15 @@ def download_latest_unpaid_invoice(ifirma_login,
     prefs = {"download.default_directory": os.getcwd()}
     options.add_experimental_option("prefs", prefs)
 
-    driver = webdriver.Chrome("/usr/bin/chromedriver", options=options)
+    driver = webdriver.Chrome(service=Service('/usr/bin/chromedriver'), options=options)
     wait = WebDriverWait(driver, 10)
 
-    driver.get("https://www.ifirma.pl/app")
+    driver.get('https://www.ifirma.pl/app')
 
-    driver.find_element(by=By.ID, value="login").send_keys(ifirma_login)
-    driver.find_element(by=By.ID, value="password").send_keys(ifirma_password)
-    driver.find_element(by=By.ID, value="loginButton").click()
-    driver.find_element(by=By.CLASS_NAME, value="ikona-konfiguracja").click()
+    driver.find_element(by=By.ID, value='login').send_keys(ifirma_login)
+    driver.find_element(by=By.ID, value='password').send_keys(ifirma_password)
+    driver.find_element(by=By.ID, value='loginButton').click()
+    driver.find_element(by=By.CLASS_NAME, value='ikona-konfiguracja').click()
 
     invoice_status = wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_FIRST_INVOICE_STATUS_CELL)))
 
@@ -109,4 +110,5 @@ def remove_invoice_files(invoices):
 
 
 if __name__ == '__main__':
+    load_dotenv()
     fetch_invoices()
