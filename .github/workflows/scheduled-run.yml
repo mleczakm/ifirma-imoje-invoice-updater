@@ -1,7 +1,6 @@
 on:
   schedule:
-    - cron: '*/5 * * * *'
-  push:
+    - cron: '0 0 1 * *' # run once at a beginning of every month
 
 jobs:
   scrape:
