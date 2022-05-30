@@ -50,8 +50,15 @@ def fetch_invoices():
 def download_latest_unpaid_invoice(ifirma_login,
                                    ifirma_password):
     options = webdriver.ChromeOptions()
-    prefs = {"download.default_directory": os.getcwd()}
+    prefs = {
+        "download.default_directory": os.getcwd(),
+    }
     options.add_experimental_option("prefs", prefs)
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-extensions')
 
     driver = webdriver.Chrome(service=Service('/usr/bin/chromedriver'), options=options)
     wait = WebDriverWait(driver, 10)
