@@ -1,6 +1,8 @@
 on:
   schedule:
     - cron: '0 0 1 * *' # run once at a beginning of every month
+  repository_dispatch:
+    types: [run]
 
 jobs:
   scrape:
