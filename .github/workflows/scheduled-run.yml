@@ -6,7 +6,7 @@ on:
 
 jobs:
   scrape:
-    name: Scrape invoice from bok and send it to custom imoje mail account
+    name: Scrape invoice from bok and send it to custom iMoje mail account
     runs-on: ubuntu-latest
     steps:
       - name: Check out this repo

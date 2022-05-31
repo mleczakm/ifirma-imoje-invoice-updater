@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import smtplib
+import sys
 from email import encoders
 from email.mime.base import MIMEBase
 from functools import reduce
@@ -32,7 +33,7 @@ def fetch_invoices():
 
     if not downloaded_invoices:
         logging.info('No new not paid invoices to be synced, aborting')
-        return
+        return 1
 
     logging.info('Fetched invoices: %s' % reduce(lambda a, b: a + ', ' + b, downloaded_invoices))
     send_email_with_invoices_as_attachment(
@@ -45,6 +46,8 @@ def fetch_invoices():
 
     remove_invoice_files(downloaded_invoices)
     logging.info('Removed invoices: %s' % reduce(lambda a, b: a + ', ' + b, downloaded_invoices))
+
+    return 0
 
 
 def download_latest_unpaid_invoice(ifirma_login,
@@ -72,7 +75,7 @@ def download_latest_unpaid_invoice(ifirma_login,
 
     invoice_status = wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_FIRST_INVOICE_STATUS_CELL)))
 
-    if invoice_status.text.find('opłacona') != -1:
+    if invoice_status.text.find('nieopłacona') != 0:
         driver.close()
         return []
 
@@ -118,4 +121,4 @@ def remove_invoice_files(invoices):
 
 if __name__ == '__main__':
     load_dotenv()
-    fetch_invoices()
+    sys.exit(fetch_invoices())
