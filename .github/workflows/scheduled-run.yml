@@ -1,6 +1,8 @@
 on:
-  schedule:
-    - cron: '0 0 1 * *' # run once at a beginning of every month
+#  schedule: DISABLED in favor of more reliable Cloudflare worker, triggered at same frequency
+#            (GitHub cron ran about 2h after 00:00 UTC, so still acceptable
+#            but since worker is defined anyway and works better...)
+#    - cron: '0 0 1 * *' # run once at a beginning of every month
   repository_dispatch:
     types: [run]
 
