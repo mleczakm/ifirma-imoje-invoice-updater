@@ -28,7 +28,7 @@ XPATH_TO_FIRST_INVOICE_STATUS_CELL = '/html/body/div[4]/div/div[2]/div/div/div/d
 
 def fetch_invoices():
     logging.basicConfig(level=os.getenv('DEBUG', False) and logging.DEBUG or logging.INFO)
-    logging.info('Starting export invoice process iFirma -> Rachunki iMoje for user %s' % os.getenv('IFIRMA_USER'))
+    logging.info('Starting export invoice process iFirma -> payappka for user %s' % os.getenv('IFIRMA_USER'))
     downloaded_invoices = download_latest_unpaid_invoice(os.getenv('IFIRMA_USER'), os.getenv('IFIRMA_PASSWORD'))
 
     if not downloaded_invoices:
