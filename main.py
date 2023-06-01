@@ -17,13 +17,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from dotenv import load_dotenv
 from email.mime.multipart import MIMEMultipart
 
-XPATH_TO_INVOICE_PREVIEW_PRINT_BUTTON = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[6]/a'
-
-XPATH_TO_FIRST_INVOICE_PREVIEW_LINK = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[2]/div/div[' \
-                                      '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[7]/a[1]'
-
-XPATH_TO_FIRST_INVOICE_STATUS_CELL = '/html/body/div[4]/div/div[2]/div/div/div/div[1]/form/div[2]/div/div[' \
-                                     '2]/div/div/div/div[2]/div/div/div[1]/table/tbody/tr[1]/td[6]'
+XPATH_TO_NEW_INVOICE_CARD_BODY_PAY_BUTTON = '/html/body/div[5]/div/div/div[2]/div[3]/div[3]/div/div[2]/div[2]/div[' \
+                                            '2]/div[1]/div[3]/div/div/div/div[3]/a[1]'
 
 
 def fetch_invoices():
@@ -71,17 +66,14 @@ def download_latest_unpaid_invoice(ifirma_login,
     driver.find_element(by=By.ID, value='login').send_keys(ifirma_login)
     driver.find_element(by=By.ID, value='password').send_keys(ifirma_password)
     driver.find_element(by=By.ID, value='loginButton').click()
-    driver.find_element(by=By.CLASS_NAME, value='ikona-konfiguracja').click()
 
-    invoice_status = wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_FIRST_INVOICE_STATUS_CELL)))
+    invoice_status = wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_NEW_INVOICE_CARD_BODY_PAY_BUTTON)))
 
-    if invoice_status.text.find('nieopłacona') != 0:
+    if invoice_status.text.find('Opłać') != 0:
         driver.close()
         return []
 
-    driver.find_element(by=By.XPATH, value=XPATH_TO_FIRST_INVOICE_PREVIEW_LINK).click()
-
-    wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_INVOICE_PREVIEW_PRINT_BUTTON))).click()
+    driver.get('https://www.ifirma.pl/app/wo/0.0.0.1.31.9.7.1.5.1.7.1.2.5.39.1.1.0.1.3.3.3.1.1.0.7.1.1.0.1.3.3.1.1')
 
     invoices = glob.glob('faktura*.pdf')
     while not invoices:
