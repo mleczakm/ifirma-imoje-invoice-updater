@@ -17,10 +17,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from dotenv import load_dotenv
 from email.mime.multipart import MIMEMultipart
 
-XPATH_TO_NEW_INVOICE_CARD_BODY_PAY_BUTTON = '/html/body/div[5]/div/div/div[2]/div[3]/div[3]/div/div[2]/div[2]/div[' \
-                                            '2]/div[1]/div[3]/div/div/div/div[3]/a[1]'
-
-
 def fetch_invoices():
     logging.basicConfig(level=os.getenv('DEBUG', False) and logging.DEBUG or logging.INFO)
     logging.info('Starting export invoice process iFirma -> payappka for user %s' % os.getenv('IFIRMA_USER'))
@@ -67,13 +63,13 @@ def download_latest_unpaid_invoice(ifirma_login,
     driver.find_element(by=By.ID, value='password').send_keys(ifirma_password)
     driver.find_element(by=By.ID, value='loginButton').click()
 
-    invoice_status = wait.until(EC.presence_of_element_located((By.XPATH, XPATH_TO_NEW_INVOICE_CARD_BODY_PAY_BUTTON)))
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.btn-success')))
 
-    if invoice_status.text.find('Opłać') != 0:
+    if driver.find_element(by=By.CSS_SELECTOR, value='.btn-success').text.find('Opłać') != 0:
         driver.close()
         return []
 
-    driver.get('https://www.ifirma.pl/app/wo/0.0.0.1.31.9.7.1.5.1.7.1.2.5.39.1.1.0.1.3.3.3.1.1.0.7.1.1.0.1.3.3.1.1')
+    driver.find_element(by=By.CSS_SELECTOR, value='a.btn-secondary:nth-child(2)').click()
 
     invoices = glob.glob('faktura*.pdf')
     while not invoices:
