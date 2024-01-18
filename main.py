@@ -58,6 +58,7 @@ def download_latest_unpaid_invoice(ifirma_login,
     wait = WebDriverWait(driver, 10)
 
     driver.get('https://www.ifirma.pl/app')
+    driver.add_cookie({'name' : 'ifi_wgmc', 'value' : 'closed'})
 
     driver.find_element(by=By.ID, value='login').send_keys(ifirma_login)
     driver.find_element(by=By.ID, value='password').send_keys(ifirma_password)
